@@ -37,6 +37,6 @@ export const CARDS: TimelineCard[] = [
   { id: "z2a7d1c5f8b3e6i9", title: "Primera Korrika", desc: "AEK organiza la primera marcha multitudinaria en favor del euskera.", dateRaw: 1980, dateLabel: "1980", summary: "Carrera por el euskera de Oñati a Bilbao.", imgUrl: "/primerakorrika.png" },
   { id: "aa5f3b9c1e7d2a6", title: "Ingreso en la CEE", desc: "España firma su adhesión a las Comunidades Europeas (actual Unión Europea).", dateRaw: 1986, dateLabel: "1986", summary: "España entra en Europa.", imgUrl: "/ingresocee.png" },
   { id: "ab8c1f6a3d9e2b7", title: "Museo Guggenheim Bilbao", desc: "Inauguración del emblemático museo diseñado por Frank Gehry que transforma Bilbao.", dateRaw: 1997, dateLabel: "1997", summary: "El Efecto Bilbao.", imgUrl: "/guggenheim.png" },
-  { id: "ac4d7a2f5c1b8e3", title: "Fin del terrorismo de ETA", desc: "La organización armada ETA anuncia el cese definitivo de su actividad armada.", dateRaw: 2011, dateLabel: "2011", summary: "Paz tras décadas de violencia.", imgUrl: "/finterrorismoeta.png" },
+  { id: "ac4d7a2f5c1b8e3", title: "Fin de la lucha armada de ETA", desc: "La organización armada ETA anuncia el cese definitivo de su actividad armada.", dateRaw: 2011, dateLabel: "2011", summary: "Paz tras décadas de violencia.", imgUrl: "/finterrorismoeta.png" },
   { id: "ad9e2c6b1f3a8d5", title: "Disolución de ETA", desc: "ETA anuncia su disolución final, concluyendo su trayectoria organizativa.", dateRaw: 2018, dateLabel: "2018", summary: "Desaparición de la organización.", imgUrl: "/etadisolucion.png" }
 ];
