@@ -114,7 +114,7 @@ export default function CardView() {
             >
               <div className="w-full h-[52%] bg-[#EBE7E0] rounded-3xl mb-5 overflow-hidden flex items-center justify-center relative shrink-0">
                 <img
-                  src={card.imgUrl}
+                  src={`${import.meta.env.BASE_URL}${card.imgUrl.replace(/^\//, '')}`}
                   alt={cardData!.title}
                   className="w-full h-full object-cover"
                 />
@@ -141,7 +141,7 @@ export default function CardView() {
             >
               <div className="w-full h-[40%] bg-[#EBE7E0] rounded-3xl mb-5 overflow-hidden flex items-center justify-center relative shrink-0">
                 <img
-                  src={card.imgUrl}
+                  src={`${import.meta.env.BASE_URL}${card.imgUrl.replace(/^\//, '')}`}
                   alt={cardData!.title}
                   className="w-full h-full object-cover opacity-80 mix-blend-multiply"
                 />

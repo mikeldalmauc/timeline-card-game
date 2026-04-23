@@ -34,14 +34,14 @@ export default function Home() {
   const handleDraw = () => {
     const cardId = drawCard();
     if (cardId) {
-      const langPath = language === "eu" ? "/card/eu/" : "/card/";
-      window.open(`${langPath}${cardId}`, "_blank");
+      const langPath = language === "eu" ? "card/eu/" : "card/";
+      window.open(`${import.meta.env.BASE_URL}#/${langPath}${cardId}`, "_blank");
     }
   };
 
   const handleOpenCard = (cardId: string) => {
-    const langPath = language === "eu" ? "/card/eu/" : "/card/";
-    window.open(`${langPath}${cardId}`, "_blank");
+    const langPath = language === "eu" ? "card/eu/" : "card/";
+    window.open(`${import.meta.env.BASE_URL}#/${langPath}${cardId}`, "_blank");
   };
 
   const handleLanguageToggle = () => {
