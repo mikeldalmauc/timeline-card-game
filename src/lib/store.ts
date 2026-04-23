@@ -20,9 +20,25 @@ export function getRemainingDeck(): string[] {
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed) && parsed.length > 0) {
           // Double check the IDs actually exist in CARDS, to be safe.
-          return parsed.filter(id => CARDS.some(c => c.id === id));
+          const filtered = parsed.filter(id => CARDS.some(c => c.id === id));
+          // If after filtering we have no cards, it means IDs don't match (e.g., data from old version)
+          // Reset the deck with fresh shuffle
+          if (filtered.length === 0) {
+            const newDeck = shuffle(CARDS.map(c => c.id));
+            setRemainingDeck(newDeck);
+            return newDeck;
+          }
+          return filtered;
       } else if (Array.isArray(parsed) && parsed.length === 0) {
-          return []; // Empty deck properly saved
+          // Check if any cards have been marked as flipped (were drawn before)
+          const flipped = localStorage.getItem(FLIPPED_KEY);
+          if (!flipped || JSON.parse(flipped).length === 0) {
+            // No cards were drawn, this is invalid state - reinitialize
+            const newDeck = shuffle(CARDS.map(c => c.id));
+            setRemainingDeck(newDeck);
+            return newDeck;
+          }
+          return []; // Valid empty deck - all cards were drawn
       }
     } catch(e) {
       // Ignored
@@ -47,6 +63,12 @@ export function drawCard(): string | null {
   const pickedId = deck.pop();
   setRemainingDeck(deck);
   return pickedId || null;
+}
+
+export function getDrawnCards(): string[] {
+  const remaining = getRemainingDeck();
+  const allCardIds = CARDS.map(c => c.id);
+  return allCardIds.filter(id => !remaining.includes(id));
 }
 
 export function resetGame() {
