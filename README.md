@@ -1,20 +1,108 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Timeline: Euskadi y España / Euskadi eta Espainia
 
-# Run and deploy your AI Studio app
+Juego de mesa virtual de tipo Timeline ambientado en la historia de Euskadi y España. Los jugadores roban cartas con eventos históricos y deben colocarlos en orden cronológico. Funciona completamente en el navegador, sin servidor ni base de datos.
 
-This contains everything you need to run your app locally.
+![Captura del juego](image.png)
 
-View your app in AI Studio: https://ai.studio/apps/fdde9a00-f38c-446f-851d-c1579c9e6495
+---
 
-## Run Locally
+## Características
 
-**Prerequisites:**  Node.js
+- **30 cartas históricas** que abarcan desde el Paleolítico hasta 2018
+- **Bilingüe** — interfaz y contenido de las cartas en castellano y euskera
+- **Carta a pantalla completa** con animación de volteo 3D y modo apaisado/vertical
+- **Estado persistente** en `localStorage` — las cartas reveladas se recuerdan entre sesiones
+- **Diseño responsive** optimizado para móvil y tablet con `100dvh`
+- **Modo pantalla completa** nativo del navegador
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Tecnologías
+
+| Capa | Librería / Herramienta |
+|---|---|
+| UI | React 19 + TypeScript |
+| Estilos | Tailwind CSS 4 |
+| Animaciones | Framer Motion / motion |
+| Iconos | Lucide React |
+| Routing | React Router v7 |
+| Build | Vite 6 |
+| Contenedor | Docker + Docker Compose |
+
+---
+
+## Requisitos
+
+- [Docker](https://docs.docker.com/get-docker/) y Docker Compose
+- O Node.js 20+
+
+---
+
+## Desarrollo
+
+### Con Docker (recomendado)
+
+```bash
+docker compose up -d --build
+```
+
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
+
+Para ver los logs:
+
+```bash
+docker logs timeline-euskadi-dev -f
+```
+
+### Sin Docker
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## Uso
+
+1. Abre la aplicación en el navegador
+2. Elige el idioma (ES / EU) desde la barra superior
+3. Pulsa el mazo para robar una carta — se abre en una nueva ventana
+4. La carta aparece en modo apaisado; pulsa el icono de orientación para cambiar a vertical
+5. Pulsa el ojo para revelar la fecha
+6. Las cartas ya reveladas quedan guardadas en el panel lateral
+7. Pulsa **Reiniciar Mazo** cuando el mazo se agote para volver a empezar
+
+---
+
+## Rutas
+
+| Ruta | Descripción |
+|---|---|
+| `/` | Página principal con el mazo y las cartas reveladas |
+| `/card/:id` | Vista de carta en castellano |
+| `/card/eu/:id` | Vista de carta en euskera |
+
+---
+
+## Estructura del proyecto
+
+```
+src/
+├── App.tsx                  # Router principal con LanguageProvider
+├── pages/
+│   ├── Home.tsx             # Mazo y panel de cartas reveladas
+│   └── CardView.tsx         # Vista de carta a pantalla completa
+└── lib/
+    ├── cards.ts             # Datos de las 30 cartas en castellano
+    ├── cardsEu.ts           # Traducciones de las cartas al euskera
+    ├── store.ts             # Estado del mazo en localStorage
+    ├── languageContext.tsx  # Contexto de idioma y traducciones UI
+    └── utils.ts             # Utilidades CSS
+```
+
+---
+
+## Licencia
+
+MIT
