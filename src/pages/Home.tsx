@@ -131,7 +131,7 @@ export default function Home() {
                       title={drawnCard.title}
                     >
                       <img
-                        src={drawnCard.imgUrl}
+                        src={`${import.meta.env.BASE_URL}${drawnCard.imgUrl.replace(/^\//, '')}`}
                         alt={drawnCard.title}
                         className="w-full h-20 object-cover"
                       />
