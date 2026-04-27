@@ -13,7 +13,7 @@ export default function CardView() {
   const { language, setLanguage } = useLanguage();
   const card = CARDS.find((c) => c.id === id);
   const [flipped, setFlipped] = useState(false);
-  const [isLandscape, setIsLandscape] = useState(true);
+  const [isLandscape, setIsLandscape] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
