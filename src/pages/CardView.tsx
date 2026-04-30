@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { CARDS } from "../lib/cards";
 import { CARDS_EU } from "../lib/cardsEu";
-import { isCardFlipped, markCardFlipped } from "../lib/store";
+import { getCardFlipCount, incrementCardFlipCount } from "../lib/store";
 import { motion } from "motion/react";
-import { Expand, Eye, Minimize, Repeat2 } from "lucide-react";
+import { Expand, Eye, Minimize } from "lucide-react";
 import { useLanguage, t } from "../lib/languageContext";
 
 export default function CardView() {
@@ -12,8 +12,8 @@ export default function CardView() {
   const location = useLocation();
   const { language, setLanguage } = useLanguage();
   const card = CARDS.find((c) => c.id === id);
-  const [flipped, setFlipped] = useState(false);
-  const [isLandscape, setIsLandscape] = useState(false);
+  const [flipCount, setFlipCount] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -28,10 +28,9 @@ export default function CardView() {
 
   useEffect(() => {
     if (id) {
-      // Check stored state on mount
-      if (isCardFlipped(id)) {
-        setFlipped(true);
-      }
+      // Check stored flip count on mount
+      const count = getCardFlipCount(id);
+      setFlipCount(count);
     }
   }, [id]);
 
@@ -47,14 +46,10 @@ export default function CardView() {
   }, []);
 
   const handleFlip = () => {
-    if (!flipped && id) {
-      setFlipped(true);
-      markCardFlipped(id);
+    if (id && !isFlipped) {
+      setIsFlipped(true);
+      incrementCardFlipCount(id);
     }
-  };
-
-  const handleToggleOrientation = () => {
-    setIsLandscape((prev) => !prev);
   };
 
   const handleToggleFullscreen = async () => {
@@ -89,12 +84,9 @@ export default function CardView() {
         <div
           className="relative z-10"
           style={{
-            width: isLandscape
-              ? `min(calc(100dvh - ${controlsReservePx}px), 75vw)`
-              : `min(calc(100dvh - ${controlsReservePx}px), 76vw)`,
+            width: `min(calc(100dvh - ${controlsReservePx}px), 76vw)`,
             aspectRatio: "3 / 4",
             perspective: 1400,
-            transform: isLandscape ? "rotate(-90deg)" : "rotate(0deg)",
             transformOrigin: "center",
             maxWidth: "100%",
             maxHeight: `calc(100dvh - ${controlsReservePx}px)`,
@@ -103,7 +95,7 @@ export default function CardView() {
           <motion.div
             style={{ transformStyle: "preserve-3d" }}
             initial={false}
-            animate={{ rotateY: flipped ? 180 : 0 }}
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
             transition={{ duration: 0.7, type: "spring", stiffness: 60, damping: 15 }}
             className="w-full h-full relative"
           >
@@ -137,7 +129,7 @@ export default function CardView() {
             {/* BACK OF CARD */}
             <div
               style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
-              className={`absolute inset-0 bg-white rounded-[3rem] shadow-2xl flex flex-col items-center p-10 overflow-hidden border ${flipped ? "border-[#BC6C25] ring-4 ring-[#BC6C25]/10" : "border-[#E5E0D5]"}`}
+              className={`absolute inset-0 bg-white rounded-[3rem] shadow-2xl flex flex-col items-center p-10 overflow-hidden border ${flipCount > 0 ? "border-[#BC6C25] ring-4 ring-[#BC6C25]/10" : "border-[#E5E0D5]"}`}
             >
               <div className="w-full h-[40%] bg-[#EBE7E0] rounded-3xl mb-5 overflow-hidden flex items-center justify-center relative shrink-0">
                 <img
@@ -172,34 +164,6 @@ export default function CardView() {
               animate={{ opacity: 1, y: 0 }}
               whileHover={{ y: -1, scale: 1.05 }}
               whileTap={{ scale: 0.96 }}
-              onClick={handleToggleOrientation}
-              className="h-14 w-14 bg-[#1f3b08] hover:bg-[#173005] text-white rounded-full border-2 border-[#d7e7c8] shadow-[0_8px_4px_rgba(31,59,8,0.8)] ring-2 ring-[#f4e7cf] flex items-center justify-center transition-all cursor-pointer"
-              title={isLandscape ? texts.changeToVertical : texts.changeToLandscape}
-              aria-label={isLandscape ? texts.changeToVertical : texts.changeToLandscape}
-            >
-              <span className="relative flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  {isLandscape ? (
-                    <>
-                      <rect x="3" y="8" width="11" height="8" rx="1.5" />
-                      <rect x="17" y="5" width="4" height="14" rx="1" />
-                    </>
-                  ) : (
-                    <>
-                      <rect x="4" y="3" width="8" height="18" rx="1.5" />
-                      <rect x="14" y="9" width="7" height="6" rx="1" />
-                    </>
-                  )}
-                </svg>
-                <Repeat2 className="w-3.5 h-3.5 absolute -right-3 -bottom-2" />
-              </span>
-            </motion.button>
-
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -1, scale: 1.05 }}
-              whileTap={{ scale: 0.96 }}
               onClick={handleToggleFullscreen}
               className="h-14 w-14 bg-[#1f3b08] hover:bg-[#173005] text-white rounded-full border-2 border-[#d7e7c8] shadow-[0_8px_4px_rgba(31,59,8,0.8)] ring-2 ring-[#f4e7cf] flex items-center justify-center transition-all cursor-pointer"
               title={isFullscreen ? texts.exitFullscreen : texts.toggleFullscreen}
@@ -212,19 +176,24 @@ export default function CardView() {
           <motion.button
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={!flipped ? { y: -1, scale: 1.05 } : undefined}
-            whileTap={!flipped ? { scale: 0.96 } : undefined}
+            whileHover={!isFlipped ? { y: -1, scale: 1.05 } : undefined}
+            whileTap={!isFlipped ? { scale: 0.96 } : undefined}
             onClick={handleFlip}
-            disabled={flipped}
-            className={`h-14 w-14 rounded-full border-2 flex items-center justify-center transition-all pointer-events-auto ${
-              flipped
+            disabled={isFlipped}
+            className={`h-14 w-14 rounded-full border-2 flex items-center justify-center transition-all pointer-events-auto relative ${
+              isFlipped
                 ? "bg-[#D1CABF] text-[#8B8477] border-[#B5AE9E] cursor-not-allowed"
                 : "bg-[#BC6C25] hover:bg-[#A3591F] text-white border-[#e0b488] shadow-lg shadow-[#BC6C25]/20 cursor-pointer"
             }`}
-            title={flipped ? texts.dateRevealed : texts.revealDate}
-            aria-label={flipped ? texts.dateRevealed : texts.revealDate}
+            title={isFlipped ? texts.dateRevealed : texts.revealDate}
+            aria-label={isFlipped ? texts.dateRevealed : texts.revealDate}
           >
             <Eye className="w-6 h-6" />
+            {flipCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#BC6C25] text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                {flipCount}
+              </span>
+            )}
           </motion.button>
         </div>
         </div>

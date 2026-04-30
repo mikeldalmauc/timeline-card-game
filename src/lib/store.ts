@@ -78,29 +78,32 @@ export function resetGame() {
   setRemainingDeck(newDeck);
 }
 
-export function isCardFlipped(id: string): boolean {
+export function getCardFlipCount(id: string): number {
   const stored = localStorage.getItem(FLIPPED_KEY);
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      return Array.isArray(parsed) && parsed.includes(id);
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed[id] || 0;
+      }
     } catch(e) {}
   }
-  return false;
+  return 0;
 }
 
-export function markCardFlipped(id: string) {
-  let flipped = [] as string[];
+export function incrementCardFlipCount(id: string) {
+  let flipCounts: Record<string, number> = {};
   const stored = localStorage.getItem(FLIPPED_KEY);
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) flipped = parsed;
+      if (typeof parsed === 'object' && parsed !== null) {
+        flipCounts = parsed;
+      }
     } catch(e) {}
   }
   
-  if (!flipped.includes(id)) {
-    flipped.push(id);
-    localStorage.setItem(FLIPPED_KEY, JSON.stringify(flipped));
-  }
+  flipCounts[id] = (flipCounts[id] || 0) + 1;
+  localStorage.setItem(FLIPPED_KEY, JSON.stringify(flipCounts));
+  window.dispatchEvent(new Event("timeline_state_changed"));
 }
